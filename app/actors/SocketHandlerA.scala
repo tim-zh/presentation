@@ -1,18 +1,14 @@
 package actors
 
-import akka.actor.{ActorRef, Actor}
+import akka.actor.{Actor, ActorRef}
 
 
-class SocketHandlerA(out: ActorRef, broadcaster: ActorRef) extends Actor
+class SocketHandlerA(out: ActorRef) extends Actor
 {
-  @scala.throws[Exception](classOf[Exception])
-  override def preStart(): Unit = {
-    broadcaster ! "hi"
-  }
-
-  override def receive: Receive = {
+  override def receive: Receive =
+  {
     case s @ ("left" | "right") =>
-      broadcaster ! s
+      context.actorSelection("/system/websockets/*/handler") ! (s + "!")
     case s @ ("left!" | "right!") =>
       out ! s
   }

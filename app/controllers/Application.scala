@@ -1,27 +1,26 @@
 package controllers
 
-import actors.{BroadcasterA, SocketHandlerA}
-import akka.actor.{Props, ActorRef}
-import play.api._
-import play.api.mvc._
+import actors.SocketHandlerA
+import akka.actor.{ActorRef, Props}
 import play.api.Play.current
-import play.libs.Akka
+import play.api.mvc._
 
 
-object Application extends Controller {
-
-  val broadcaster = Akka.system().actorOf(Props(classOf[BroadcasterA]))
+object Application extends Controller
+{
 
   def index = Action {
     Ok(views.html.index(false))
   }
 
+
   def control = Action {
     Ok(views.html.index(true))
   }
 
+
   def socket = WebSocket.acceptWithActor[String, String] { implicit request =>
-    out: ActorRef => Props(classOf[SocketHandlerA], out, broadcaster)
- 	}
+    out: ActorRef => Props(classOf[SocketHandlerA], out)
+  }
 
 }
