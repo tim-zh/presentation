@@ -1,0 +1,63 @@
+@(control: Boolean)
+@main("presentation") {
+
+    <div class="reveal">
+
+  			<!-- Any section element inside of this container is displayed as a slide -->
+  			<div class="slides">
+  				<section>
+  					<h1>нечеткий поиск</h1>
+  				</section>
+
+                <section>
+                    <h1>расстояние Левенштейна</h1>
+                </section>
+
+                <section>
+                    <p>
+                        <img src="@routes.Assets.at("images/0.png")"/>
+                    </p>
+  				</section>
+  			</div>
+
+  		</div>
+
+    <script>
+        // Full list of configuration options available at:
+        // https://github.com/hakimel/reveal.js#configuration
+        Reveal.initialize({
+            controls: false,
+            keyboard: @(if(control) "true" else "false"),
+            progress: true,
+            history: true,
+            center: true,
+
+            transition: 'slide' // none/fade/slide/convex/concave/zoom
+        });
+
+        connect("socket", function(msg) {
+            @if(!control) {
+                switch (msg.data) {
+                    case "left!":
+                        Reveal.left();
+                        break;
+                    case "right!":
+                        Reveal.right();
+                    break;
+                }
+            }
+        });
+        @if(control) {
+            document.addEventListener ( 'keydown', function(event) {
+            switch( event.keyCode ) {
+                case 37:
+                    sendMessage("left");
+                    break;
+                case 39:
+                    sendMessage("right");
+                    break;
+            }
+            }, false ) ;
+        }
+    </script>
+}
