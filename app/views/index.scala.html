@@ -152,7 +152,15 @@
                         break;
                     default:
                         var s = msg.data.split(";");
-                        setMark(s[0], s[1], s[2], s[3].substring(0, s[3].length - 1));
+                        var x1 = s[0];
+                        var y1 = s[1];
+                        var x2 = s[2];
+                        var y2 = s[3];
+                        var remoteWidth = s[4];
+                        var remoteHeight = s[5].substring(0, s[5].length - 1);
+                        var wK = document.body.clientWidth / remoteWidth;
+                        var hK = document.body.clientHeight / remoteHeight;
+                        setMark(x1 * wK, y1 * hK, x2 * wK, y2 * hK);
                         break;
                 }
             }
@@ -175,13 +183,14 @@
             document.addEventListener('mousedown', function(event) {
                 x = event.clientX;
                 y = event.clientY;
-                setMark(event.clientX, event.clientY, event.clientX, event.clientY);
+                setMark(x, y, x, y);
+                sendMessage(x + ";" + y + ";" + x + ";" + y + ";" + document.body.clientWidth + ";" + document.body.clientHeight);
                 isMouseDown = true;
             }, false);
             document.addEventListener('mousemove', function(event) {
                 if (isMouseDown) {
                     setMark(x, y, event.clientX, event.clientY);
-                    sendMessage(x + ";" + y + ";" + event.clientX + ";" + event.clientY);
+                    sendMessage(x + ";" + y + ";" + event.clientX + ";" + event.clientY + ";" + document.body.clientWidth + ";" + document.body.clientHeight);
                 }
             }, false);
             document.addEventListener('mouseup', function(event) {
