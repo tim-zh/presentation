@@ -6,7 +6,7 @@
   			<!-- Any section element inside of this container is displayed as a slide -->
   			<div class="slides">
   				<section>
-  					<h1>Fuzzy search</h1>
+  					!@*<h1>Fuzzy search</h1>*@
   				</section>
 
                 <section>
@@ -146,7 +146,14 @@
                         break;
                     case "right!":
                         Reveal.right();
-                    break;
+                        break;
+                    case "clear!":
+                        clearMark();
+                        break;
+                    default:
+                        var s = msg.data.split(";");
+                        setMark(s[0], s[1], s[2], s[3].substring(0, s[3].length - 1));
+                        break;
                 }
             }
         });
@@ -161,6 +168,27 @@
                     break;
             }
             }, false ) ;
+        }
+
+        @if(control) {
+            var x, y, isMouseDown;
+            document.addEventListener('mousedown', function(event) {
+                x = event.clientX;
+                y = event.clientY;
+                setMark(event.clientX, event.clientY, event.clientX, event.clientY);
+                isMouseDown = true;
+            }, false);
+            document.addEventListener('mousemove', function(event) {
+                if (isMouseDown) {
+                    setMark(x, y, event.clientX, event.clientY);
+                    sendMessage(x + ";" + y + ";" + event.clientX + ";" + event.clientY);
+                }
+            }, false);
+            document.addEventListener('mouseup', function(event) {
+                clearMark();
+                isMouseDown = false;
+                sendMessage("clear");
+            }, false);
         }
     </script>
 }
