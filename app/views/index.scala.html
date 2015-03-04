@@ -190,13 +190,25 @@
             }, false);
             document.addEventListener('mousemove', function(event) {
                 if (isMouseDown) {
-                    setMark(x, y, event.clientX, event.clientY);
+                    var x1 = x;
+                    var y1 = y;
+                    var x2 = event.clientX;
+                    var y2 = event.clientY;
+                    if (x1 > x2) {
+                        x1 = x2;
+                        x2 = x;
+                    }
+                    if (y1 > y2) {
+                        y1 = y2;
+                        y2 = y;
+                    }
+                    setMark(x1, y1, x2, y2);
                     sendMessage({
                         mark: "set",
-                        x1: x - document.body.clientWidth / 2,
-                        y1: y - document.body.clientHeight / 2,
-                        x2: event.clientX - document.body.clientWidth / 2,
-                        y2: event.clientY - document.body.clientHeight / 2,
+                        x1: x1 - document.body.clientWidth / 2,
+                        y1: y1 - document.body.clientHeight / 2,
+                        x2: x2 - document.body.clientWidth / 2,
+                        y2: y2 - document.body.clientHeight / 2,
                         width: document.body.clientWidth,
                         height: document.body.clientHeight });
                 }
