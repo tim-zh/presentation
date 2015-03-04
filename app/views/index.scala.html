@@ -6,116 +6,11 @@
   			<!-- Any section element inside of this container is displayed as a slide -->
   			<div class="slides">
   				<section>
-  					<h1>Fuzzy search</h1>
+  					<h1>Presentation!</h1>
   				</section>
 
                 <section>
-                    <h2>Approaches:</h2>
-                    <ol>
-                        <li>without precalculation</li>
-                        <li>with precalculation</li>
-                    </ol>
-                </section>
-
-                <section>
-                    <h1>Levenshtein distance</h1>
-                    <p>(deletions, additions, replacements)</p>
-                </section>
-
-                <section>
-                    <p>
-                        <img src="@routes.Assets.at("images/0.png")"/>
-                    </p>
-  				</section>
-
-                <section>
-                    <p>
-                        Levenshtein<br>
-                        <img src="@routes.Assets.at("images/1.png")"/>
-                    </p>
-                    <p>
-                        Damerau–Levenshtein<br>(transpositions)<br>
-                        <img src="@routes.Assets.at("images/2.png")"/>
-                    </p>
-  				</section>
-
-                <section>
-                    <pre><code class="java">public int getLevenshteinDistance(String str1, String str2)
-{
-    int len1 = str1.length();
-    int len2 = str2.length();
-    int[][] arr = new int[len1 + 1][len2 + 1];
-    for (int i = 0; i <= len1; i++)
-        arr[i][0] = i;
-    for (int i = 1; i <= len2; i++)
-        arr[0][i] = i;
-    for (int i = 1; i <= len1; i++)
-    {
-        for (int j = 1; j <= len2; j++)
-        {
-            int m = (str1.charAt(i - 1) == str2.charAt(j - 1)) ? 0:1;
-            arr[i][j] = Math.min(Math.min(arr[i - 1][j] + 1, arr[i][j - 1] + 1),
-                                 arr[i - 1][j - 1] + m);
-        }
-    }
-    return arr[len1][len2];
-}</code></pre>
-                </section>
-
-                <section>
-                    <h1>Precalculations</h1>
-                </section>
-
-                <section>
-                    <h1>Typo dictionary</h1>
-                </section>
-
-                <section>
-                    <img src="@routes.Assets.at("images/3.png")"/>
-                </section>
-
-                <section>
-                    <h1>Signature hashing</h1>
-                </section>
-
-                <section>
-                    <img src="@routes.Assets.at("images/4.png")"/>
-                </section>
-
-                <section>
-                    <h1>N-grams</h1>
-                </section>
-
-                <section>
-                    <h3>3-grams</h3>
-                    <img src="@routes.Assets.at("images/5.png")"/>
-                </section>
-
-                <section>
-                    <h1>in kiwi:</h1>
-                </section>
-
-                <section>
-                    For each menu node caption:
-                    <ol>
-                        <li>single letters</li>
-                        <li>two sequential letters</li>
-                        <li>first and last of three sequential letters</li>
-                    </ol><br>
-                    <p>and length</p>
-                </section>
-
-                <section>
-                    <h3>Example:</h3>
-                    <pre>
-                        "cat"
-                         ca   - two sequential letters
-                          at
-                         c t  - first and last of three sequential letters
-                         c    - single letters
-                          a
-                           t
-                    </pre>
+                    slide!
                 </section>
 
                 <section>
