@@ -1,5 +1,5 @@
 @(control: Boolean)
-@main("presentation") {
+@main("presentation", control) {
 
     <div class="reveal">
 
@@ -128,51 +128,47 @@
     <script>
         // Full list of configuration options available at:
         // https://github.com/hakimel/reveal.js#configuration
+        var enableKeyboard = @(if(control) "true" else "false");
         Reveal.initialize({
             controls: false,
-            keyboard: @(if(control) "true" else "false"),
+            keyboard: enableKeyboard,
             progress: true,
             history: true,
             center: true,
+            width: 960,
+            height: 700,
+            minScale: 1,
+            maxScale: 1,
 
             transition: 'slide' // none/fade/slide/convex/concave/zoom
         });
 
-        connect("socket", function(msg) {
-            @if(!control) {
-                switch (msg.data) {
-                    case "left!":
-                        Reveal.left();
-                        break;
-                    case "right!":
-                        Reveal.right();
-                        break;
-                    case "clear!":
-                        clearMark();
-                        break;
-                    default:
-                        var s = msg.data.split(";");
-                        var x1 = s[0];
-                        var y1 = s[1];
-                        var x2 = s[2];
-                        var y2 = s[3];
-                        var remoteWidth = s[4];
-                        var remoteHeight = s[5].substring(0, s[5].length - 1);
-                        var wK = document.body.clientWidth / remoteWidth;
-                        var hK = document.body.clientHeight / remoteHeight;
-                        setMark(x1 * wK, y1 * hK, x2 * wK, y2 * hK);
-                        break;
-                }
-            }
-        });
+        var markDiv;
+        var setMark = function(x1, y1, x2, y2) {
+          if (!markDiv) {
+            markDiv = document.createElement("div");
+            document.body.appendChild(markDiv);
+            markDiv.style.position = "absolute";
+            markDiv.style.zIndex = 100;
+          }
+          markDiv.style.border = "#f55f5f solid 2px";
+          markDiv.style.left = x1 + "px";
+          markDiv.style.top = y1 + "px";
+          markDiv.style.width = (x2 - x1) + "px";
+          markDiv.style.height = (y2 - y1) + "px";
+        };
+        var clearMark = function() {
+          markDiv.style.border = "transparent";
+        };
+
         @if(control) {
             document.addEventListener ('keydown', function(event) {
                 switch(event.keyCode) {
                     case 37:
-                        sendMessage("left");
+                        sendMessage({ dir: "left" });
                         break;
                     case 39:
-                        sendMessage("right");
+                        sendMessage({ dir: "right" });
                         break;
                 }
             }, false);
@@ -182,20 +178,59 @@
                 x = event.clientX;
                 y = event.clientY;
                 setMark(x, y, x, y);
-                sendMessage(x + ";" + y + ";" + x + ";" + y + ";" + document.body.clientWidth + ";" + document.body.clientHeight);
+                sendMessage({
+                    mark: "set",
+                    x1: x - document.body.clientWidth / 2,
+                    y1: y - document.body.clientHeight / 2,
+                    x2: x - document.body.clientWidth / 2,
+                    y2: y - document.body.clientHeight / 2,
+                    width: document.body.clientWidth,
+                    height: document.body.clientHeight });
                 isMouseDown = true;
             }, false);
             document.addEventListener('mousemove', function(event) {
                 if (isMouseDown) {
                     setMark(x, y, event.clientX, event.clientY);
-                    sendMessage(x + ";" + y + ";" + event.clientX + ";" + event.clientY + ";" + document.body.clientWidth + ";" + document.body.clientHeight);
+                    sendMessage({
+                        mark: "set",
+                        x1: x - document.body.clientWidth / 2,
+                        y1: y - document.body.clientHeight / 2,
+                        x2: event.clientX - document.body.clientWidth / 2,
+                        y2: event.clientY - document.body.clientHeight / 2,
+                        width: document.body.clientWidth,
+                        height: document.body.clientHeight });
                 }
             }, false);
             document.addEventListener('mouseup', function(event) {
                 clearMark();
                 isMouseDown = false;
-                sendMessage("clear");
+                sendMessage({ mark: "clear" });
             }, false);
+
+            connect("socket", function() {});
+        } else {
+            connect("socket", function(message) {
+                var msg = JSON.parse(message.data);
+
+                if (msg.dir) {
+                    if (msg.dir == "left")
+                        Reveal.left();
+                    else
+                        Reveal.right();
+                }
+                if (msg.mark) {
+                    if (msg.mark == "clear")
+                        clearMark();
+                    else if (msg.mark == "set")
+                        setMark(
+                            msg.x1 + document.body.clientWidth / 2,
+                            msg.y1 + document.body.clientHeight / 2,
+                            msg.x2 + document.body.clientWidth / 2,
+                            msg.y2 + document.body.clientHeight / 2);
+                }
+            });
         }
+
+        hljs.initHighlightingOnLoad();
     </script>
 }

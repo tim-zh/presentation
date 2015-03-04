@@ -1,4 +1,7 @@
-This is your new Play application
-=================================
+run `activator dist`,
+launch the server,
+open control link from the console,
+navigate between slides by keyboard,
+set a mark on a slide by mouse;
 
-This file will be packaged with your application, when using `activator dist`.
+all control events are propagated to everyone else watching the same address (without the control id)
